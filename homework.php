@@ -1,82 +1,68 @@
 <?php
 
-interface dvdPlayFunction
+class Human
 {
-   public function play(); 
-   public function nextChapter();
-   public function stop();
-}
+    private $name;
+    private $surname;
+    private $age;
+    private $gender;
 
-abstract class dvdMechanicFunction implements dvdPlayFunction
-{
-    public function loadDisk()
-    {
-        echo 'Загружается диск… '.'<br><br>';
-    }
-    public function ejectDisk()
-    {
-        echo 'Выброс диска.'.'<br><br>';
-    }
-}
+    public const MALE = "male";
+    public const FEMALE = "female";
 
-trait dvdWarning 
-{
-    private function loading()
-    {
-        echo ' Загружен…'.'<br><br>';
-    }
-    private function inser()
-    {
-        echo 'Возьмите диск'.'<br><br>';
-    }
-    public function play()
-    {
-        echo 'Воспроизведение'.'<br><br>';
-    }
-}
+    private const GENDER = [
+        self::MALE => 'мужской',
+        self::FEMALE => 'женский'
+    ];
+  
 
-class dvdPlayer extends dvdMechanicFunction implements dvdPlayFunction
-{
-    use dvdWarning;
-    public function loadDisk()
-    {   
-        echo 'Загружается диск… '.'<br><br>';
-        $this->loading();
-    }
-    public function play()
+    function __construct($name, $surname, $gender)
     {
-        echo 'Воспроизведение'.'<br><br>';
+        $this->name = $name;
+        $this->surname = $surname;
+        $this->gender = $gender;
     }
-    public function nextChapter()
+
+    public function __set($property, $value){
+        if(property_exists($this, $property)){
+                if($property === 'surname'){
+                    $this->$property = $value;
+                }else if($property === 'age' && gettype($value) === 'integer'){
+                    if($value > 0 && $value < 130)
+                    {
+                        $this->$property = $value;
+                    }else{
+                        echo "Возраст ввели неверно!!!" . "<br>";
+                    }
+                }else{
+                    echo "Внимание ошибка! нельзя поменять свойство {$property}" . '<br>';
+                }
+                
+            }else{
+                echo "Внимание ошибка! нельзя поменять свойство {$property}". "<br>";
+            }
+            
+        }
+
+    public function __get($property)
     {
-        echo 'Поиск следующей сцены.'.'<br><br>';
-        $this->play(); 
+        echo $this->$property . '<br>';
     }
-    public function stop()
+
+   
+    public function getProps()
     {
-        echo 'Стоп.'.'<br><br>';
-    }
-    public function ejectDisk()
-    {
-        echo 'Выброс диска.'.'<br><br>';
-        $this->inser();
+        echo 'Фамилия:  ' . $this->surname . "<br>";
+        echo 'Имя: ' . $this->name . "<br>";
+        echo 'Возраст: ' . $this->age . "<br>";
+        echo 'Пол: ' . self::GENDER[$this->gender] . "<br>";
     }
 }
 
-
-$player = new dvdPlayer();
-$player->loadDisk();
-$player->play();
-$player->nextChapter();
-$player->stop(); 
-$player->ejectDisk();  
-
-
-
-
-
-
-
-
-
-
+$human = new Human("Наталья", "Краснова", Human::FEMALE);
+$human->age = 30;
+$human->surname = "Василькова";
+$human->name = "Ксения";
+$human->gender = "male";
+echo $human->name;
+echo $human->getProps()."<br>";
